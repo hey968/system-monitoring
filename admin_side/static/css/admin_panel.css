@@ -1,0 +1,11 @@
+body{
+    height: 100vh;
+}
+
+.container-fluid,.row,.col-4,.table-responsive,.table{
+    height: 100%;
+}
+thead > tr >th{
+    text-align: left;
+}
+

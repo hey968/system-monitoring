@@ -1,0 +1,18 @@
+#log-form{
+    text-align: right;
+    font-size: 3em;
+}
+.page-heading{
+    text-align: center;
+    font-size:3em;
+}
+#log-form > #submit{
+    width:100%;
+    font-size: 1em;
+}
+.errors {
+    text-align: right;
+    font-size: 2.5em;
+    color: red;
+    font-weight: bold;
+}
