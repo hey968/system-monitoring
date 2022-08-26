@@ -3,7 +3,11 @@ from watchdog.events import PatternMatchingEventHandler
 import os
 import datetime
 import pandas as pd
+import json
 
+with open("configure.json", "r") as fd:
+    json_data = json.load(fd)
+pwd = json_data["user_side_loc"]
 
 # rdp monitoring
 

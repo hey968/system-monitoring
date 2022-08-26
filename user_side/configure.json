@@ -1,6 +1,10 @@
 {
-  "learning_phase": false,
   "project_loc": "F:\\davidson_shlav_bet\\project\\",
-  "user_side_loc":"F:\\davidson_shlav_bet\\project\\user_side\\",
-  "admin_side_loc": "F:\\davidson_shlav_bet\\project\\admin_side\\"
+  "user_side_loc": "F:\\davidson_shlav_bet\\project\\user_side\\",
+  "admin_side_loc": "F:\\davidson_shlav_bet\\project\\admin_side\\",
+  "hey":[
+    {
+      "learning_phase": false
+    }
+  ]
 }

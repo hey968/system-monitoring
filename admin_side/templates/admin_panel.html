@@ -35,8 +35,8 @@
             {% if data_html %}
             {{ data_html | safe}}
             <form method="post">
-                <input type="submit" name="no" value="not confirm (please run Security check" style="background-color: red">
-                <input type="submit" name="yes" value="confirm (the user can use the computer)" style="background-color: green">
+                <input type="submit" name="no" value="not confirm (please run Security check" style="background-color: red" class="btn btn-default">
+                <input type="submit" name="yes" value="confirm (the user can use the computer)" style="background-color: green" class="btn btn-default">
             </form>
             {% endif %}
         </div>

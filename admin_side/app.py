@@ -11,6 +11,7 @@ import pandas as pd
 import json
 import htmlentities
 
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 Bootstrap(app)
@@ -93,10 +94,10 @@ def admin_panel():
     if request.method == "GET":
         data = pd.read_csv(pwd+"user_anomaly_detection.csv").to_dict()
         if data['accept'] and data["accept"][0] == 0:
-            data_html = "<div><h1>an exception found</h1>" \
+            data_html = "<div><h1><u>An exception found</u></h1>" \
                         "<br>" \
                         "<p>" \
-                        "details:<br>user: "+str(data["user"][0])+"<br>time to write: " + str(data["time_to_write"][0]) + "<br> time in day: " + str(data["hour"][0])+":"\
+                        "details:<br>user: "+str(data["user"][0])+"<br>command: "+str(data['command'][0])+"<br> location"+str(data['location'][0])+"<br>time to write: " + str(data["time_to_write"][0]) + "<br> time in day: " + str(data["hour"][0])+":"\
                         +str(data["minute"][0])+"</div>"
         else:
             data_html = False
