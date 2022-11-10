@@ -9,29 +9,46 @@
     <link href="{{ url_for('static',filename='css/admin_panel.css') }}" rel="stylesheet">
 
 </head>
-<body>
+<body onload="startTime()">
 <nav class="navbar bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="{{url_for('logout')}}">exit</a>
+    <a class="navbar-brand" href="{{url_for('logout')}}" style="color:white;">exit</a>
+      <div id="clock" style="text-align: right; color:white"></div>
   </div>
 </nav>
+{% if forms%}
+{{forms | safe}}
+{% endif %}
 <div class="container-fluid">
     <div class="row">
-        <div class="col-4">
-            <div class="table-responsive">
-            {% for table in file_tables %}
-            {{ table|safe }}
-            {% endfor %}
+        <div class="col-6" id="first_separator">
+            <div class="table-responsive" >
+
+                    {% for table in file_tables %}
+                    {{ table|safe }}
+                    {% endfor %}
+
             </div>
         </div>
-        <div class="col-4">
+
+
+        <div class="col-6" id="second_separator">
             <div class="table-responsive">
-            {% for table in rdp_tables %}
-            {{ table|safe }}
-            {% endfor %}
+
+                    {% for table in rdp_tables %}
+                    {{ table|safe }}
+                    {% endfor %}
+
             </div>
         </div>
-        <div class="col-4">
+    </div>
+    <div class="row">
+        <div class="col-6" id="third_separator">
+            {% if web_checker %}
+            {{web_checker | safe}}
+            {% endif %}
+        </div>
+        <div class="col-6" id="forth_separator">
             {% if data_html %}
             {{ data_html | safe}}
             <form method="post">
@@ -41,8 +58,28 @@
             {% endif %}
         </div>
     </div>
-
-
 </div>
+<script>
+    function startTime() {
+  const today = new Date();
+  let h = today.getHours();
+  let m = today.getMinutes();
+  let s = today.getSeconds();
+  let d = today.getDate();
+  const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+  let cur_month = month[today.getMonth()];
+  let y = today.getFullYear()
+  m = checkTime(m);
+  s = checkTime(s);
+  document.getElementById('clock').innerHTML =  y+" " + cur_month + " " + d+"  "+ h + ":" + m + ":" + s;
+  setTimeout(startTime, 1000);
+}
+
+function checkTime(i) {
+  if (i < 10) {i = "0" + i};
+  return i;
+}
+</script>
 </body>
 </html>

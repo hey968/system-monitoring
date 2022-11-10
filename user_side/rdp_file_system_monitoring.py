@@ -5,6 +5,7 @@ import datetime
 import pandas as pd
 import json
 
+
 with open("configure.json", "r") as fd:
     json_data = json.load(fd)
 pwd = json_data["user_side_loc"]
@@ -65,6 +66,11 @@ def on_modified(e):
 
 
 def on_moved(e):
+    '''
+
+    :param e:
+    :return: None
+    '''
     if os.path.exists("file_system.csv"):
         df = pd.read_csv("file_system.csv")
     else:

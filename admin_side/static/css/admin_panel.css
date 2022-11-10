@@ -1,5 +1,6 @@
 body{
     height: 100vh;
+
 }
 
 .container-fluid,.row,.col-4,.table-responsive,.table{
@@ -9,3 +10,13 @@ thead > tr >th{
     text-align: left;
 }
 
+#second_separator,#first_separator{
+    height: 100%;
+    padding: 0px;
+}
+#third_separator,#forth_separator{
+    height: 100%;
+    padding-top: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+}

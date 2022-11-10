@@ -1,11 +1,9 @@
 from flask import Flask, render_template, redirect, url_for, flash, abort, request, make_response
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import relationship
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user, \
     fresh_login_required
 from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.utils import secure_filename
 from forms import LoginForm
 import pandas as pd
 import json
@@ -84,15 +82,32 @@ def admin_panel():
     if not current_user.is_authenticated:
         return url_for("login")
     if request.method == "POST":
-        if "yes" in request.form:
-            df = pd.read_csv(pwd+"user_anomaly_detection.csv")
-            df["accept"][0] = 1
-            df.to_csv(pwd+"user_anomaly_detection.csv",index=False,header=True)
+        if "web_name" in request.form:
+            if "block" in request.form:
+                with open("c:\Windows\System32\Drivers\etc\hosts", "a") as fd:
+                    fd.write("127.0.0.1 "+request.form["web_name"])
+                    data_web = pd.read_csv(pwd+"web_checker.csv")
+                    data_web = data_web.iloc[1:]
+                    data_web.to_csv(pwd + "web_checker.csv", index=False, header=True)
 
-        data = pd.read_csv(pwd+"user_anomaly_detection.csv").to_dict()
+            else:
+                pass
+        else:
+            if "yes" in request.form:
+                df = pd.read_csv(pwd+"user_anomaly_detection.csv")
+                df["accept"][0] = 1
+                df.to_csv(pwd+"user_anomaly_detection.csv",index=False,header=True)
+            elif "no" in request.form:
+                pass
+
+
+
+            data = pd.read_csv(pwd+"user_anomaly_detection.csv").to_dict()
         return redirect(url_for("admin_panel"))
+
     if request.method == "GET":
         data = pd.read_csv(pwd+"user_anomaly_detection.csv").to_dict()
+        data_web = pd.read_csv(pwd+"web_checker.csv").to_dict()
         if data['accept'] and data["accept"][0] == 0:
             data_html = "<div><h1><u>An exception found</u></h1>" \
                         "<br>" \
@@ -101,13 +116,28 @@ def admin_panel():
                         +str(data["minute"][0])+"</div>"
         else:
             data_html = False
+        if len(data_web["protocol"]) > 0:
+            forms = ""
+            web_checker = "<table class='table table-bordered table-hover table-dark'><thead><tr><th>website name</th><th>protocol</th><th>reason</th><th>block</th></tr></thead><tbody>"
+            for i in range(len(data_web["reason"])):
+                web_checker += "<tr>"
+                for key in data_web.keys():
+                    web_checker += "<td><input type='text' name='web_name' form='form"+str(i)+"' value=" + data_web[key][i] + " readonly></td>"
+                web_checker += "<td><input type='submit' form='form" + str(i) + "' name='block' value='block the website'><br>" \
+                               "<input type='submit' form='form" + str(i) + "' name='safe' value='the website is safe'></td>"
+                web_checker += "</tr>"
+                forms += "<form method='post' id='form"+str(i)+"'> </form>"
+            web_checker += "</tbody></table>"
+        else:
+            web_checker=False
+            forms = False
         return render_template("admin_panel.html", file_tables=[
-            (pd.read_csv(pwd+"file_system.csv").sort_values(by='date_and_time',ascending=False)).to_html(classes='table table-bordered', index=False,
+            (pd.read_csv(pwd+"file_system.csv").sort_values(by='date_and_time',ascending=False)).to_html(classes='table table-bordered table-hover table-dark', index=False,
                                                                 table_id='file_system_table').replace("<thead>",
                                                                                                       "<thead class='sticky-top bg-white'")],rdp_tables=[
-            (pd.read_csv(pwd+"rdp_connections.csv").sort_values(by='date_and_time',ascending=False)).to_html(classes='table table-bordered', index=False,
+            (pd.read_csv(pwd+"rdp_connections.csv").sort_values(by='date_and_time',ascending=False)).to_html(classes='table table-bordered table-dark table-hover', index=False,
                                                                 table_id='file_system_table').replace("<thead>",
-                                                                                                      "<thead class='sticky-top bg-white'")],data_html=data_html)
+                                                                                                      "<thead class='sticky-top bg-white'")],data_html=data_html,web_checker=web_checker,forms=forms)
 @app.route("/logout")
 @fresh_login_required
 def logout():

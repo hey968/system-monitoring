@@ -31,7 +31,7 @@ def train_ml_for_user(user):
     #
     # print(clf.predict(sc.transform(np.array([0.215, '7', '54']).reshape(1, 3))))
     # print(clf.predict(sc.transform(np.array([0.8, '4', '54']).reshape(1, 3))))
-    #joblib.dump(clf,pwd+user+"_isloated_forest.pkl")
+    joblib.dump(clf,pwd+user+"_isloated_forest.pkl")
     #joblib.dump(sc,"std_scaler.pkl")
     # isf = joblib.load(pwd + "hey_isloated_forest.pkl")
     # sc = joblib.load(pwd + "std_scaler.pkl")
