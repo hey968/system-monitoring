@@ -6,7 +6,10 @@ import pandas as pd
 import json
 
 
-with open("configure.json", "r") as fd:
+def get_conf():
+    cwd = os.getcwd()
+    return cwd[:cwd.rfind("project")+len("project")] + "\\user_side\\configure.json"
+with open(get_conf(), "r") as fd:
     json_data = json.load(fd)
 pwd = json_data["user_side_loc"]
 
@@ -95,4 +98,7 @@ def main(current_connected_ip):
         current_connected_ip = rdp_monitoring(current_connected_ip)
 
 
-main("")
+
+
+if __name__ == "__main__":
+    main("")

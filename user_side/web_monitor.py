@@ -42,3 +42,5 @@ def get_https_s_connection():
 def main():
     while True:
         pass
+if __name__ == "__main__":
+    main()
