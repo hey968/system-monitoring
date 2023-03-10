@@ -4,17 +4,49 @@ import os
 import datetime
 import pandas as pd
 import json
+from sqlalchemy import create_engine
+from sqlalchemy import Column, Integer, TEXT
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
 
 
 def get_conf():
     cwd = os.getcwd()
-    return cwd[:cwd.rfind("project")+len("project")] + "\\user_side\\configure.json"
-with open(get_conf(), "r") as fd:
+    return cwd[:cwd.rfind("project")+len("project")]
+
+with open(get_conf()+ "\\user_side\\configure.json", "r") as fd:
     json_data = json.load(fd)
 pwd = json_data["user_side_loc"]
 
-# rdp monitoring
 
+engine = create_engine('sqlite:///' + get_conf() +"\\admin_side\\admin.db")
+Session = sessionmaker(bind=engine)
+session=Session()
+Base = declarative_base()
+
+
+class rdp_connections(Base):
+    __tablename__ = "rdp_connections"
+    id = Column(Integer,primary_key=True)
+    ip = Column(TEXT)
+    date_and_time = Column(TEXT)
+class file_system(Base):
+    __tablename__ = "file_system"
+    id = Column(Integer, primary_key=True)
+    date_and_time = Column(TEXT)
+    event = Column(TEXT)
+    file = Column(TEXT)
+
+"""
+to create the table of file_system in database
+"""
+# Base.metadata.create_all(engine)
+
+
+
+# rdp monitoring
+#uncomment the line below to demonstrate
 #check_port_open = ['TCP', '10.100.102.24:3389', '10.100.102.25:61519', 'ESTABLISHED']
 def rdp_monitoring(current_connected_ip):
     if os.path.exists("rdp_connections.csv"):
@@ -32,8 +64,12 @@ def rdp_monitoring(current_connected_ip):
             print(check_port_open)
             if current_connected_ip != check_port_open[2][:check_port_open[2].find(":")]:
                 current_connected_ip = check_port_open[2][:check_port_open[2].find(":")]
-                df.loc[len(df.index)] = [current_connected_ip, datetime.datetime.today().strftime('%d-%m-%Y, %H:%M:%S')]
-                df.to_csv("rdp_connections.csv", index=False, header=True)
+                #df.loc[len(df.index)] = [current_connected_ip, datetime.datetime.today().strftime('%d-%m-%Y, %H:%M:%S')]
+                #df.to_csv("rdp_connections.csv", index=False, header=True)
+                add_ip = rdp_connections(ip=current_connected_ip,date_and_time=datetime.datetime.today().strftime('%d-%m-%Y, %H:%M:%S'))
+                session.add(add_ip)
+                session.commit()
+
     return current_connected_ip
 
 
@@ -44,8 +80,11 @@ def on_deleted(e):
     else:
         df = pd.DataFrame(columns=["date_and_time", "event", "file"])
     if "file_system.csv" not in e.src_path and "rdp_connections.csv" not in e.src_path:
-        df.loc[len(df.index)] = [datetime.datetime.today().strftime('%d-%m-%Y, %H:%M:%S'), "deleted", str(e.src_path)]
-        df.to_csv("file_system.csv", index=False, header=True)
+        # df.loc[len(df.index)] = [datetime.datetime.today().strftime('%d-%m-%Y, %H:%M:%S'), "deleted", str(e.src_path)]
+        # df.to_csv("file_system.csv", index=False, header=True)
+        add_deleted = file_system(date_and_time=datetime.datetime.today().strftime('%d-%m-%Y, %H:%M:%S'),event="deleted",file=str(e.src_path))
+        session.add(add_deleted)
+        session.commit()
 
 
 def on_created(e):
@@ -54,8 +93,13 @@ def on_created(e):
     else:
         df = pd.DataFrame(columns=["date_and_time", "event", "file"])
     if "file_system.csv" not in e.src_path and "rdp_connections.csv" not in e.src_path:
-        df.loc[len(df.index)] = [datetime.datetime.today().strftime('%d-%m-%Y, %H:%M:%S'), "created", str(e.src_path)]
-        df.to_csv("file_system.csv", index=False, header=True)
+        # df.loc[len(df.index)] = [datetime.datetime.today().strftime('%d-%m-%Y, %H:%M:%S'), "created", str(e.src_path)]
+        # df.to_csv("file_system.csv", index=False, header=True)
+        add_created = file_system(date_and_time=datetime.datetime.today().strftime('%d-%m-%Y, %H:%M:%S'),
+                                  event="created",
+                                  file=str(e.src_path))
+        session.add(add_created)
+        session.commit()
 
 
 def on_modified(e):
@@ -64,8 +108,13 @@ def on_modified(e):
     else:
         df = pd.DataFrame(columns=["date_and_time", "event", "file"])
     if "file_system.csv" not in e.src_path and "rdp_connections.csv" not in e.src_path:
-        df.loc[len(df.index)] = [datetime.datetime.today().strftime('%d-%m-%Y, %H:%M:%S'), "modified", str(e.src_path)]
-        df.to_csv("file_system.csv", index=False, header=True)
+        # df.loc[len(df.index)] = [datetime.datetime.today().strftime('%d-%m-%Y, %H:%M:%S'), "modified", str(e.src_path)]
+        # df.to_csv("file_system.csv", index=False, header=True)
+        add_modified = file_system(date_and_time=datetime.datetime.today().strftime('%d-%m-%Y, %H:%M:%S'),
+                                  event="modified",
+                                   file=str(e.src_path))
+        session.add(add_modified)
+        session.commit()
 
 
 def on_moved(e):
@@ -79,12 +128,18 @@ def on_moved(e):
     else:
         df = pd.DataFrame(columns=["date_and_time", "event", "file"])
     if "file_system.csv" not in e.src_path and "rdp_connections.csv" not in e.src_path:
-        df.loc[len(df.index)] = [datetime.datetime.today().strftime('%d-%m-%Y, %H:%M:%S'), "moved", str(e.src_path)]
-        df.to_csv("file_system.csv", index=False, header=True)
+        # df.loc[len(df.index)] = [datetime.datetime.today().strftime('%d-%m-%Y, %H:%M:%S'), "moved", str(e.src_path)]
+        # df.to_csv("file_system.csv", index=False, header=True)
+        add_moved = file_system(date_and_time=datetime.datetime.today().strftime('%d-%m-%Y, %H:%M:%S'),
+                                event="moved"
+                                ,file=str(e.src_path))
+        session.add(add_moved)
+        session.commit()
 
 
 def main(current_connected_ip):
-    event_handler = PatternMatchingEventHandler(patterns="*", ignore_patterns=" ", ignore_directories=False,
+    event_handler = PatternMatchingEventHandler(patterns="*", ignore_patterns=" ",
+                                                ignore_directories=False,
                                                 case_sensitive=True)
     event_handler.on_deleted = on_deleted
     event_handler.on_created = on_created

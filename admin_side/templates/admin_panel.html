@@ -23,41 +23,70 @@
     <div class="row">
         <div class="col-6" id="first_separator">
             <div class="table-responsive" >
-
-                    {% for table in file_tables %}
-                    {{ table|safe }}
-                    {% endfor %}
-
+                    <table class="table table-bordered table-hover table-dark" id="file_system_table">
+                        <thead class="sticky-top bg-white">
+                            <tr>
+                                <th>date and time</th>
+                                <th>event</th>
+                                <th>file path</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for row in file_system_table %}
+                            <tr>
+                                <td>{{row.date_and_time}}</td>
+                                 <td>{{row.event}}</td>
+                                 <td>{{row.file}}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
             </div>
         </div>
 
 
         <div class="col-6" id="second_separator">
             <div class="table-responsive">
+                    <table class="table table-bordered table-dark table-hover" id="rdp_connections_table">
+                        <thead class="sticky-top bg-white">
+                            <tr>
 
-                    {% for table in rdp_tables %}
-                    {{ table|safe }}
-                    {% endfor %}
+                                <th>ip</th>
+                                <th>date and time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for row in rdp_table %}
+                            <tr>
+                                <td>{{row.ip}}</td>
+                                <td>{{row.date_and_time}}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
 
             </div>
         </div>
     </div>
+    {% if (web_table or user_anomaly_alert) %}
     <div class="row">
         <div class="col-6" id="third_separator">
-            {% if web_checker %}
-            {{web_checker | safe}}
+            {% if web_table %}
+            {{web_table | safe}}
             {% endif %}
         </div>
         <div class="col-6" id="forth_separator">
-            {% if data_html %}
-            {{ data_html | safe}}
+            {% if user_anomaly_alert %}
+            {{ user_anomaly_alert | safe}}
             <form method="post">
-                <input type="submit" name="no" value="not confirm (please run Security check" style="background-color: red" class="btn btn-default">
+                <input type="submit" name="no" value="not confirm (please run Security check)" style="background-color: red" class="btn btn-default">
                 <input type="submit" name="yes" value="confirm (the user can use the computer)" style="background-color: green" class="btn btn-default">
             </form>
             {% endif %}
         </div>
     </div>
+    {% endif %}
 </div>
 <script>
     function startTime() {

@@ -1,7 +1,6 @@
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.ensemble import IsolationForest
 import plotly.express as px
 import joblib
@@ -10,6 +9,11 @@ import os
 
 
 def train_ml_for_user(user):
+    """
+    the function is train the modal to detect user exception
+    :param user:
+    :return:
+    """
     with open("configure.json", "r") as fd:
         json_data = json.load(fd)
     pwd = json_data["user_side_loc"]
@@ -21,17 +25,15 @@ def train_ml_for_user(user):
     word_df = word_df.sort_values(by=['hour', 'minute'])
     X = word_df.iloc[:,[1,3,4]].values
 
-    #print(X)
     # sc = StandardScaler()
     # X = sc.fit_transform(X)
     clf = IsolationForest(random_state=42,contamination=0.1)
     y_pred = clf.fit_predict(X)
 
-    # print(clf.predict(sc.transform(np.array([0.222, '17', '50']).reshape(1, 3))))
-    #
-    # print(clf.predict(sc.transform(np.array([0.215, '7', '54']).reshape(1, 3))))
-    # print(clf.predict(sc.transform(np.array([0.8, '4', '54']).reshape(1, 3))))
+
     joblib.dump(clf,pwd+user+"_isloated_forest.pkl")
+
+
     #joblib.dump(sc,"std_scaler.pkl")
     # isf = joblib.load(pwd + "hey_isloated_forest.pkl")
     # sc = joblib.load(pwd + "std_scaler.pkl")

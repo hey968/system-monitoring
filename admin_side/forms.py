@@ -4,6 +4,6 @@ from wtforms.validators import DataRequired
 
 
 class LoginForm(FlaskForm):
-    uname = StringField("שם משתמש", validators=[DataRequired()])
-    password = PasswordField("סיסמה", validators=[DataRequired()])
-    submit = SubmitField("כניסה")
+    uname = StringField("username", validators=[DataRequired()])
+    password = PasswordField("password", validators=[DataRequired()])
+    submit = SubmitField("login")
